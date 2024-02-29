@@ -1,5 +1,7 @@
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "../styles/globals.css";
+import ReduxProvider from "@/redux/provider";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -10,8 +12,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" data-theme='cmyk'>
+      <body className={inter.className}>
+        <GoogleOAuthProvider clientId="52716464133-fm49t8ujps4miljt4g1kgjd869fs242j.apps.googleusercontent.com">
+        <ReduxProvider>{children}</ReduxProvider>
+        </GoogleOAuthProvider>
+      </body>
     </html>
   );
 }
