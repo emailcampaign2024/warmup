@@ -43,7 +43,7 @@ const SignIn = () => {
 
     return (
         <div className='w-screen h-screen'>
-            <p className='left text-bold text-3xl p-4 w-full bg-gray-100'><span className='text-green-500'>i</span><span className='text-blue-500'>SYS</span></p>
+            <p className='left text-bold text-3xl p-4 w-full mx-4 my-2 '><span className='text-green-500'>i</span><span className='text-blue-500'>SYS</span></p>
             <div className="card card-side bg-base-100 mx-auto my-28 shadow-xl w-[600px] h-[400px]">
                 <figure className='w-[200px] '><img src="https://w0.peakpx.com/wallpaper/291/484/HD-wallpaper-g-google-black-g-logo-from-google-g-symbol-google-logo-logos.jpg" alt="Movie"/></figure>
                 <div className="card-body space-y-10 h-full flex flex-col items-center justify-center">

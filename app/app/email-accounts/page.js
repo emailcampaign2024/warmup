@@ -38,8 +38,8 @@ const EmailAccounts = () => {
         <div className="modal-box w-96 max-w-5xl flex flex-col justify-center items-center">
           <h3 className="font-bold text-lg">Connect Google/Gmail Account</h3>
           <div className="modal-action">
-            <form method="dialog modal-backdrop">
-              <button className="btn btn-[#0052CC]" onClick={() => document.getElementById("connectSMTP").showModal()}>SMTP Setup</button>
+            <form method="dialog">
+              <button className="btn btn-[#0052CC]" >SMTP Setup</button>
             </form>
           </div>
         </div>
