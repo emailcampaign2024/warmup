@@ -1,14 +1,6 @@
-import DoughnutChart from '@/app/ui/doughnutChart/doughnutChart'
-import StackedBarChart from '@/app/ui/stackedbarChart/stackedbarChart';
 import React from 'react'
 
-const Overview = () => {
-    const data1 = [70, 30]; // Example data for Dataset 1
-    const ChartData = [
-        [15, 0, 0],
-        [7, 1, 0],
-        [12, 4, 1],
-      ];
+const AccountsOverview = () => {
   return (
     <div className="w-[98vw] h-full flex flex-col  rounded-2xl  ">
         <div className='flex items-center'>
@@ -50,9 +42,7 @@ const Overview = () => {
                         <p className='font-semibold text-xl text-slate-800 py-4 px-2'>Spam</p>
                     </div>
                     <div className='flex w-full items-center'>
-                        <div className='w-1/2'>
-                            <DoughnutChart data1={data1}  />
-                        </div>
+                        <div className='w-1/2'>circular progress bar</div>
                         <div className='w-1/2'>
                         <div className="stats stats-vertical shadow ">
                             <div className="stat ">
@@ -72,9 +62,7 @@ const Overview = () => {
                         <h2 className="font-semibold text-xl text-slate-800 py-4 px-2">Warmup email sent</h2>
                         <p className='text-slate-600 text-lg'>(last 7 days)</p>
                     </div>
-                    <div>
-                        <StackedBarChart data={ChartData} />
-                    </div>
+                    <div>content</div>
                 </div>
                 </div>
             </div>
@@ -89,4 +77,4 @@ const Overview = () => {
   )
 }
 
-export default Overview
+export default AccountsOverview

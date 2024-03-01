@@ -2,3 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+
+.navbar-shadow {
+    box-shadow: -1px 1px 12px 6px rgba(0,0,0,0.12),
+0px 2px 2px 0px rgba(0,0,0,0.12),
+0px 1px 177px 1px rgba(0,0,0,0.22);
+}
+
+.dropdown-shadow{
+    box-shadow: -1px 1px 12px 6px rgba(0,0,0,0.12),
+0px 2px 2px 0px rgba(0,0,0,0.12),
+0px 1px 122px -52px rgba(0,0,0,0.22);
+}
+
+.body-shadow{
+    box-shadow: -1px 1px 12px 6px rgba(0,0,0,0.12),
+0px 2px 2px 0px rgba(0,0,0,0.12),
+0px 1px 0px 1px rgba(0,0,0,0.22);
+}
