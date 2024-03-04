@@ -13,7 +13,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" data-theme='cmyk'>
-      <body className={inter.className}>
+      <body className={inter.className} >
         <GoogleOAuthProvider clientId="52716464133-fm49t8ujps4miljt4g1kgjd869fs242j.apps.googleusercontent.com">
         <ReduxProvider>{children}</ReduxProvider>
         </GoogleOAuthProvider>

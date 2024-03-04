@@ -8,7 +8,7 @@ const Navbar = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("profileDetails"));
+    const data = JSON.parse(sessionStorage.getItem("profileDetails"));
     if (data) {
       setProfile(data);
     }
@@ -17,7 +17,7 @@ const Navbar = () => {
   const logOut = () => {
     googleLogout();
     setProfile(null);
-    localStorage.removeItem("profileDetails");
+    sessionStorage.removeItem("profileDetails");
     router.push("/auth/signin");
   };
 
@@ -41,8 +41,11 @@ const Navbar = () => {
           </svg>
         </div>
         <ul tabIndex={0} className="menu dropdown-content  z-10 p-2 shadow bg-base-100 rounded-box w-52 dropdown-shadow mt-4">
-          <li><a>Item 1</a></li> 
-          <li><a>Item 2</a></li>
+          <li><a>Email Campaigns</a></li> 
+          <li><a>Master Inbox</a></li>
+          <li><a>Email Accounts</a></li>
+          <li><a>Integrations</a></li>
+          <li><a>Global Analytics</a></li>
         </ul>
       </div>
       </div>
@@ -70,16 +73,10 @@ const Navbar = () => {
             className="mt-3  p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 z-10 dropdown-shadow"
           >
             <li>
-              <a className="justify-between">
-                Profile
-                <span className="badge">New</span>
-              </a>
-            </li>
-            <li>
-              <a>Settings</a>
+              <p>Profile</p>
             </li>
             <li onClick={logOut}>
-              <a>Logout</a>
+              <p>Logout</p>
             </li>
           </ul>
         </div>
