@@ -80,7 +80,7 @@ const Navbar = (user) => {
             className="btn btn-ghost btn-circle avatar"
           >
             <div className={googleProfile ? 'w-10 rounded-full' : 'w-7 rounded-full'}>
-              {googleProfile ? <Image alt="googleProfile" src={googleProfile?.picture} width={48} height={48} /> : <Image alt="Profile" src={'/public/profile (2).png'} width={30} height={30} /> }
+              {googleProfile ? <Image alt="googleProfile" src={googleProfile?.picture} width={48} height={48} /> : <Image alt="Profile" src={'/profile.png'} width={30} height={30} /> }
             </div>
           </div>
           <ul
