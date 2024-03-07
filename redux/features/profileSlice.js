@@ -7,12 +7,13 @@ const initialState = {
 
 const ProfileSlice = createSlice({
     name:'profile',
-    initialState:initialState,
+    initialState:{
+        user:[]
+    },
     reducers:{
         addUser: (state , action) => {
-            state.userName = '' ,
-            state.userName = action.payload.username ,
-            state.userDp = action.payload.profileImage
+            state.user = '' ,
+            state.user = action.payload
         },
         delUser: (state) => {
             state = []

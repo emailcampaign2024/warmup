@@ -1,25 +1,39 @@
 "use client";
+import { delUser } from "@/redux/features/profileSlice";
 import { googleLogout } from "@react-oauth/google";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
-const Navbar = () => {
+const Navbar = (user) => {
   const [profile, setProfile] = useState(null);
+  const [googleProfile , setGoogleProfile] = useState(null)
   const router = useRouter();
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    const data = JSON.parse(sessionStorage.getItem("profileDetails"));
-    if (data) {
-      setProfile(data);
-    }
-  }, []);
+    setGoogleProfile(JSON.parse(sessionStorage.getItem('googleProfile')))
+    setProfile(JSON.parse(sessionStorage.getItem('user')))
+  },[])
 
-  const logOut = () => {
-    googleLogout();
-    setProfile(null);
-    sessionStorage.removeItem("profileDetails");
-    router.push("/auth/signin");
+  const handleLogout = () => {
+    if(googleProfile){
+      googleLogout();
+      setProfile(null);
+      sessionStorage.removeItem("googleProfile");
+      router.push("/auth/signin")
+    }
+
+    if(profile){
+      dispatch(delUser(user))
+      sessionStorage.removeItem('user')
+      sessionStorage.removeItem('jwt')
+      router.push("/auth/signin")
+    }
   };
+
+
 
   return (
     <div className="navbar px-4 navbar-shadow ">
@@ -57,15 +71,16 @@ const Navbar = () => {
           </p>
         </a>
       </div>
-      <div className="flex-none gap-2">
+      <div className="flex-none gap-2 ">
+        {profile ? <p className="font-semibold text-slate-500 mt-1 mr-1">{profile.first_name}</p> : null}
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
             role="button"
             className="btn btn-ghost btn-circle avatar"
           >
-            <div className="w-10 rounded-full">
-              <img alt="Profile" src={profile?.picture} />
+            <div className={googleProfile ? 'w-10 rounded-full' : 'w-7 rounded-full'}>
+              {googleProfile ? <img alt="Profile" src={googleProfile?.picture} /> : <Image alt="Profile" src={'/profile (2).png'} width={30} height={30} /> }
             </div>
           </div>
           <ul
@@ -75,7 +90,7 @@ const Navbar = () => {
             <li>
               <p>Profile</p>
             </li>
-            <li onClick={logOut}>
+            <li onClick={handleLogout}>
               <p>Logout</p>
             </li>
           </ul>

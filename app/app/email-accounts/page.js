@@ -1,14 +1,18 @@
 "use client";
 import EmptyEmailAccount from "@/app/ui/emptyEmailAccounts/page";
 import { EmailAccountsList } from "@/constants";
-import { handleInputChange } from "@/utils/helper";
+import { getAllEmailAccounts, handleInputChange } from "@/utils/helper";
+import axios from "axios";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { Toaster } from "react-hot-toast";
+import React, { useEffect, useRef, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 const EmailAccounts = () => {
-  const [emailAccounts, setEmailAccounts] = useState(EmailAccountsList);
+  const [emailAccounts, setEmailAccounts] = useState(null);
+  const [selectedAccounts, setSelectedAccounts] = useState([]);
+  const [showModal, setShowModal] = useState(false);
   const [smtpDetails, setSmtpDetails] = useState({
     fromName: "",
     fromEmail: "",
@@ -23,27 +27,111 @@ const EmailAccounts = () => {
     tagName: "None",
   });
   const router = useRouter();
-  const { id } = useParams()
+  const { id } = useParams();
+  const [isLoading, setIsLoading] = useState(false);
+  const [shouldReload, setShouldReload] = useState(false);
 
+  useEffect(() => {
+    const requestInterceptor = axios.interceptors.request.use(
+      (config) => {
+        setIsLoading(true);
+        return config;
+      },
+      (error) => {
+        setIsLoading(false);
+        return Promise.reject(error);
+      }
+    );
+    
+    const responseInterceptor = axios.interceptors.response.use(
+      (response) => {
+        setIsLoading(false);
+        return response;
+      },
+      (error) => {
+        setIsLoading(false);
+        return Promise.reject(error);
+      }
+    );
+    
+
+    const fetchEmailList = async () => {
+      try {
+        const response = await axios.get(
+          "https://warmup-backend-j7v6.onrender.com/client/getAll"
+        );
+        if (response.data) {
+          setEmailAccounts(response.data.configs);
+        }
+        setShouldReload(false);
+      } catch (error) {
+        console.error("Error fetching email accounts:", error);
+      }
+    };
+
+    fetchEmailList();
+
+    if (shouldReload) {
+      fetchEmailList();
+    }
+
+    return () => {
+      axios.interceptors.request.eject(requestInterceptor);
+      axios.interceptors.response.eject(responseInterceptor);
+    };
+  }, [shouldReload]);
 
   const handleRadioChange = (e) => {
     const { value } = e.target;
-    setSmtpDetails((prevValue)=>({
+    setSmtpDetails((prevValue) => ({
       ...prevValue,
-      smtpPort: value === '' ? null : parseInt(value, 10)
-    }) )
+      smtpPort: value === "" ? null : parseInt(value, 10),
+    }));
   };
 
+  const handleSelectAllAccounts = () => {
+    const allSelected = selectedAccounts.length === emailAccounts?.length;
 
+    if (allSelected) {
+      setSelectedAccounts([]);
+    } else {
+      const allAccountNames = emailAccounts.map((account) => account.fromName);
+      setSelectedAccounts(allAccountNames);
+    }
+  };
 
-  const handleSmtpSaveButtonClick = (e) => {
+  const handleSmtpSaveButtonClick = async (e) => {
     e.preventDefault();
-    console.log(smtpDetails);
+    try {
+      const response = await axios.post(
+        "https://warmup-backend-j7v6.onrender.com/client/accountadd",
+        smtpDetails
+      );
+      if (response.status === 201) {
+        document.getElementById("connectSMTP").close();
+        setShouldReload(true);
+        toast.success("Account Added Successfully !");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleAccountClick = (id) => {
-    router.push(`email-accounts/${id}`);
+  const handleAccountClick = (name) => {
+    const isSelected = selectedAccounts.includes(name);
+    if (isSelected) {
+      setSelectedAccounts((prevSelected) =>
+        prevSelected.filter((accountName) => accountName !== name)
+      );
+    } else {
+      setSelectedAccounts((prevSelected) => [...prevSelected, name]);
+    }
   };
+
+  const handleAccountOverviewClick = (name) => {
+    router.push(`email-accounts/${name}`);
+  };
+
   return (
     <div className="w-[98vw] h-full flex flex-col  rounded-2xl ">
       <dialog id="selectProvider" className="modal">
@@ -66,7 +154,7 @@ const EmailAccounts = () => {
       <dialog id="connectSMTP" className="modal">
         <div className="modal-box w-11/12 max-w-3xl flex flex-col justify-center items-center">
           <div className="modal-action">
-            <form method="post" >
+            <form method="post">
               <h3 className="font-semibold text-lg my-3">SMTP settings</h3>
               <div className="w-full space-x-6  flex  mb-6">
                 <input
@@ -75,7 +163,7 @@ const EmailAccounts = () => {
                   className="input input-bordered w-[50%] max-w-xs"
                   name="fromName"
                   value={smtpDetails.fromName}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setSmtpDetails)}
                 />
                 <input
                   type="text"
@@ -83,7 +171,7 @@ const EmailAccounts = () => {
                   className="input input-bordered w-[50%] max-w-xs"
                   name="fromEmail"
                   value={smtpDetails.fromEmail}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setSmtpDetails)}
                 />
               </div>
               <div className="w-full space-x-6 flex mb-6">
@@ -93,7 +181,7 @@ const EmailAccounts = () => {
                   className="input input-bordered w-[50%] max-w-xs"
                   name="userName"
                   value={smtpDetails.userName}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setSmtpDetails)}
                 />
                 <input
                   type="text"
@@ -101,7 +189,7 @@ const EmailAccounts = () => {
                   className="input input-bordered w-[50%] max-w-xs"
                   name="appPassword"
                   value={smtpDetails.appPassword}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setSmtpDetails)}
                 />
               </div>
               <div className="w-full flex space-x-6 mb-6">
@@ -111,7 +199,7 @@ const EmailAccounts = () => {
                   className="input input-bordered w-[50%] max-w-xs"
                   name="smtpHost"
                   value={smtpDetails.smtpHost}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setSmtpDetails)}
                 />
                 <div className="w-[50%] flex items-center justify-between ">
                   <input
@@ -120,7 +208,7 @@ const EmailAccounts = () => {
                     className="input input-bordered w-[30%] max-w-xs"
                     name="smtpPort"
                     value={smtpDetails.smtpPort || ""}
-                    onChange={handleInputChange}
+                    onChange={(e) => handleInputChange(e, setSmtpDetails)}
                   />
                   <label className="label cursor-pointer s">
                     <span className="label-text mr-1">ssl</span>
@@ -150,8 +238,8 @@ const EmailAccounts = () => {
                       type="radio"
                       name="port"
                       className="radio"
-                      value={''}
-                      checked={smtpDetails.smtpPort === ''}
+                      value={""}
+                      checked={smtpDetails.smtpPort === ""}
                       onChange={handleRadioChange}
                     />
                   </label>
@@ -164,7 +252,7 @@ const EmailAccounts = () => {
                   className="input input-bordered w-[50%] max-w-xs"
                   name="messagePerDay"
                   value={smtpDetails.messagePerDay}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setSmtpDetails)}
                 />
                 <input
                   type="text"
@@ -172,7 +260,7 @@ const EmailAccounts = () => {
                   className="input input-bordered w-[50%] max-w-xs"
                   name="minimumTimeGap"
                   value={smtpDetails.minimumTimeGap}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setSmtpDetails)}
                 />
               </div>
               <div>
@@ -184,7 +272,7 @@ const EmailAccounts = () => {
                     className="input input-bordered w-[50%] max-w-xs"
                     name="imapHost"
                     value={smtpDetails.imapHost}
-                    onChange={handleInputChange}
+                    onChange={(e) => handleInputChange(e, setSmtpDetails)}
                   />
                   <input
                     type="text"
@@ -192,7 +280,7 @@ const EmailAccounts = () => {
                     className="input input-bordered w-[50%] max-w-xs"
                     name="imapPort"
                     value={smtpDetails.imapPort}
-                    onChange={handleInputChange}
+                    onChange={(e) => handleInputChange(e, setSmtpDetails)}
                   />
                 </div>
                 <div className="w-full space-x-6 flex mb-6">
@@ -202,7 +290,7 @@ const EmailAccounts = () => {
                     className="input input-bordered w-[50%] max-w-xs"
                     name="tagName"
                     value={smtpDetails.tagName}
-                    onChange={handleInputChange}
+                    onChange={(e) => handleInputChange(e, setSmtpDetails)}
                   />
                 </div>
               </div>
@@ -214,7 +302,11 @@ const EmailAccounts = () => {
                 >
                   Save
                 </button>
-                <button className="btn btn-md  bg-gray-500 text-slate-100" formMethod="dialog" type="submit">
+                <button
+                  className="btn btn-md  bg-gray-500 text-slate-100"
+                  formMethod="dialog"
+                  type="submit"
+                >
                   cancel
                 </button>
               </div>
@@ -224,7 +316,7 @@ const EmailAccounts = () => {
       </dialog>
       <div className="h-[60px] w-full  flex justify-between items-center px-2">
         <h2 className="font-semibold text-xl text-slate-800">Email Accounts</h2>
-        {emailAccounts.length !== 0 ? (
+        {emailAccounts === null ? null : emailAccounts.length !== 0 ? (
           <button
             className="btn btn-sm bg-blue-500 text-slate-100"
             onClick={() =>
@@ -236,15 +328,28 @@ const EmailAccounts = () => {
         ) : null}
       </div>
       <div>
-        {emailAccounts.length !== 0 ? (
-          <div className="overflow-x-auto h-[500px] px-4 border border-[#E0E0E0]  bg-white">
+        <div className="overflow-x-auto h-[500px] px-4 border border-[#E0E0E0]  bg-white">
+          {emailAccounts === null ? (
+            <div className="mt-44 flex justify-center items-center">
+              <span className="loading loading-bars loading-lg"></span>
+            </div>
+          ) : emailAccounts.length === 0 ? (
+            <EmptyEmailAccount />
+          ) : (
             <table className="table table-pin-rows ">
-              {/* head */}
               <thead>
                 <tr>
                   <th>
                     <label>
-                      <input type="checkbox" className="checkbox" />
+                      <input
+                        type="checkbox"
+                        className="checkbox"
+                        checked={
+                          selectedAccounts.length === emailAccounts?.length &&
+                          emailAccounts.length !== 0
+                        }
+                        onChange={handleSelectAllAccounts}
+                      />
                     </label>
                   </th>
                   <th>Name</th>
@@ -254,50 +359,81 @@ const EmailAccounts = () => {
                 </tr>
               </thead>
               <tbody>
-                {/* row 1 */}
-                {emailAccounts.map((account,index) => {
-                  return (
-                      <tr
-                      key={index}
-                      className="cursor-pointer hover:bg-[#DEEBFF]"
-                      onClick={() => handleAccountClick(account.name)}
-                    >
-                      <th>
-                        <label>
-                          <input type="checkbox" className="checkbox" />
-                        </label>
-                      </th>
-                      <td>
-                        <div className="flex items-center gap-3">
-                          <div>
-                            <div className="font-bold">{account.name}</div>
+                {emailAccounts.map((account) => (
+                  <tr key={account._id} className="relative">
+                    <th>
+                      <label>
+                        <input
+                          type="checkbox"
+                          className="checkbox"
+                          checked={selectedAccounts.includes(account.fromName)}
+                          onChange={() => handleAccountClick(account.fromName)}
+                        />
+                      </label>
+                    </th>
+                    <td>
+                      <div className="flex items-center gap-3">
+                        <div>
+                          <div
+                            className="font-bold hover:text-blue-500 cursor-pointer "
+                            onClick={() =>
+                              handleAccountOverviewClick(account._id)
+                            }
+                          >
+                            {account.fromName}
                           </div>
                         </div>
-                      </td>
-                      <td>
-                        <p>{account.email}</p>
-                      </td>
-                      <td>{account.dailyLimit}/200</td>
-                      <td>
-                        <div
-                          className={`badge  ${
-                            account.warmupEnabled
-                              ? "bg-green-300"
-                              : "badge-ghost"
-                          } text-slate-800`}
+                      </div>
+                    </td>
+                    <td>
+                      <p
+                        className=" hover:text-blue-500 cursor-pointer "
+                        onClick={() =>
+                          handleAccountOverviewClick(account._id)
+                        }
+                      >
+                        {account.fromEmail}
+                      </p>
+                    </td>
+                    <td>0/{account.messagePerDay}</td>
+                    <td>
+                      <div
+                        className={`badge  ${
+                          account.warmupEnabled ? "bg-green-300" : "badge-ghost"
+                        } text-slate-800`}
+                      >
+                        {account.warmupEnabled ? "Yes" : "No"}
+                      </div>
+                    </td>
+                    <td>
+                      <details className="dropdown dropdown-end absolute right-10 top-4">
+                        <summary className="cursor-pointer btn btn-xs btn-ghost">
+                          <Image
+                            src={"/more_icon.png"}
+                            alt="more"
+                            width={20}
+                            height={20}
+                          />
+                        </summary>
+                        <ul
+                          tabIndex={0}
+                          className="dropdown-content z-[1] menu p-2 dropdown-shadow bg-base-100 rounded-box w-52 mt-1"
                         >
-                          {account.warmupEnabled ? "Yes" : "No"}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                          <li>
+                            <a>Remove Account</a>
+                          </li>
+                          <li>
+                            <a>Reconnect Account</a>
+                          </li>
+                        </ul>
+                      </details>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
-          </div>
-        ) : (
-          <EmptyEmailAccount />
-        )}
+          )}
+        </div>
       </div>
       <Toaster />
     </div>

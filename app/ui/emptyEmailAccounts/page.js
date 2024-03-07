@@ -15,7 +15,7 @@ const EmptyEmailAccount = () => {
         <div className="card-body items-center text-center space-y-3">
           <h2 className="card-title text-slate-800">Add Email Account</h2>
           <div className="card-actions ">
-            <button className="btn bg-blue-500 text-slate-100">SMTP Setup</button>
+            <button className="btn bg-blue-500 text-slate-100" onClick={ () => document.getElementById("connectSMTP").showModal()}>SMTP Setup</button>
           </div>
         </div>
       </div>

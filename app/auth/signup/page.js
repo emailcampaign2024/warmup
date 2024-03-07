@@ -4,57 +4,59 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
-import { useDispatch } from "react-redux";
 import Image from "next/image";
 
 import { handleInputChange } from "@/utils/helper";
 import { login, setJwtToken, setRefreshToken } from "@/utils/auth";
-import { addUser } from "@/redux/features/profileSlice";
 
-const SignIn = () => {
+const SignUp = () => {
   const [googleUser, setGoogleUser] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-
   const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
     email: "",
-    userName: "",
     password: "",
   });
+
   const router = useRouter();
-  const dispatch = useDispatch()
 
-  const handleGoogleLogin =  useGoogleLogin({
-    onSuccess: (codeResponse) => setGoogleUser(codeResponse),
-    onError: (error) => toast.error(`Error During Logging In , ${error}`),
-  });
-
+  const handleSignInClick = () => {
+    router.push('signin')
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      setIsLoading(true);
-      const response = await axios.post('https://warmup-backend-j7v6.onrender.com/user/login', formData);
-
-      if (response.data.user) {
-        setJwtToken(response.data.token);
-        dispatch(addUser(response.data.user));
-        console.log(response.data.user)
-        sessionStorage.setItem('user', JSON.stringify(response.data.user));
-        router.push('/app/email-accounts');
-        toast.success(`Welcome Back ${response.data.user.first_name}`);
-      }
-    } catch (error) {
-      console.error('Error during logging in:', error);
-      toast.error('Error during logging in. Please try again.');
-    } finally {
-      setIsLoading(false); 
-    }
+    await axios
+      .post("https://warmup-backend-j7v6.onrender.com/user/signup", formData)
+      .then((res) => {
+        if (res.status == 200) {
+          setIsLoading(true);
+        }
+        if(res.data.error){
+          toast.error(res.data.error)
+        }
+        if(res.data.user){
+          toast.success("Account Created Successfully !")
+          router.push('signin')
+        }
+        console.log(res.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        toast.error(error)
+      });
   };
-  
 
   useEffect(() => {
-    setIsGoogleLoading(true);
+    const storedProfile = sessionStorage.getItem("profileDetails");
+    if (storedProfile) {
+      setProfile(JSON.parse(storedProfile));
+    }
+  }, []);
+
+  useEffect(() => {
     if (googleUser) {
       axios
         .get(
@@ -67,16 +69,13 @@ const SignIn = () => {
           }
         )
         .then((res) => {
-          const googleProfile = JSON.stringify(res.data);
-          sessionStorage.setItem('googleProfile', googleProfile);
+          const profileDetails = JSON.stringify(res.data);
+          sessionStorage.setItem("profileDetails", profileDetails);
+          setProfile(res.data);
           router.push("/app/email-accounts");
-          toast.success(`Welcome Back , ${res.data.given_name}`)
-
+          toast.success(`Welcome Back , ${res.data.given_name}`);
         })
-        .catch((err) => console.log(err))
-        .finally(() => {
-          setIsGoogleLoading(false); // Reset Google loading state
-        });
+        .catch((err) => console.log(err));
     }
   }, [googleUser]);
 
@@ -89,17 +88,39 @@ const SignIn = () => {
         </p>
       </div>
       <div className="w-full h-[90%] flex justify-center items-center">
-        <div className="card card-side w-[50%] h-[70%] bg-base-100 shadow-xl rounded-xl">
+        <div className="card card-side w-[60%] h-[80%] bg-base-100 shadow-xl rounded-xl">
           <figure>
-            <Image src="/login_img.jpg" width={420} height={700} alt="login" />
+            <Image src="/signup_img.jpg" width={400} height={700} alt="login" />
           </figure>
           <div className="flex flex-col justify-start items-center gap-4 w-full p-6  bg-gradient-to-r from-green-200  to-blue-200   rounded-r-xl">
-            <p className="font-semibold text-2xl">Sign In</p>
+            <p className="font-semibold text-2xl">Sign Up</p>
             <form
               method="post"
               onSubmit={handleSubmit}
-              className="flex flex-col gap-4 mt-1"
+              className="flex flex-col gap-4 mt-2"
             >
+              <div className="flex gap-2">
+                <label className="input input-bordered flex items-center gap-2">
+                  <input
+                    type="text"
+                    className="grow w-44"
+                    placeholder="First Name"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={(e) => handleInputChange(e, setFormData)}
+                  />
+                </label>
+                <label className="input input-bordered flex items-center gap-2">
+                  <input
+                    type="text"
+                    className="grow w-44"
+                    placeholder="Last Name"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={(e) => handleInputChange(e, setFormData)}
+                  />
+                </label>
+              </div>
               <label className="input input-bordered flex items-center gap-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +133,7 @@ const SignIn = () => {
                 </svg>
                 <input
                   type="text"
-                  className="grow w-44"
+                  className="grow"
                   placeholder="Email"
                   name="email"
                   value={formData.email}
@@ -132,24 +153,35 @@ const SignIn = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-                <input type="password" className="grow" name="password" placeholder="Password" value={formData.password} onChange={(e) => handleInputChange(e, setFormData)} />
-              </label>
-              <button className="btn  btn-outline  w-full " type="submit" onClick={handleSubmit} >{isLoading ? <span className="loading loading-spinner loading-md"></span>: 'Sign In'}</button>
-            </form>
-            <p className="font-semibold">or</p>
-            <button
-              className="btn btn-wide btn-outline border-none flex justify-start gap-3"
-              onClick={handleGoogleLogin}
-            >
-              <span>
-                <Image
-                  src={"/Google_g_logo.png"}
-                  alt="google"
-                  width={42}
-                  height={42}
+                <input
+                  type="password"
+                  className="grow"
+                  name="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={(e) => handleInputChange(e, setFormData)}
                 />
-              </span>
-              Login with google
+              </label>
+              <button
+                className="btn  btn-outline  w-full mt-4"
+                type="submit"
+                onClick={handleSubmit}
+              >
+                {isLoading ? (
+                  <span className="loading loading-dots loading-xs"></span>
+                ) : (
+                  "Create Account"
+                )}
+              </button>
+            </form>
+            <p className="font-semibold text-sm mt-4">
+              Already have an account?{" "}
+            </p>
+            <button
+              className="btn btn- bg-black text-slate-100 hover:text-black w-44"
+              onClick={handleSignInClick}
+            >
+              Sign Up
             </button>
             <Toaster />
           </div>
@@ -159,4 +191,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignUp;

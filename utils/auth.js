@@ -16,7 +16,9 @@ export const getRefreshToken = () => {
     return sessionStorage.getItem("refreshToken")
 }
 
-export const login = async(formData) => {
-    const response = await axios.post('api/endpoint' , {email,password})
-    return response
+export const login = async(endPoint ,formData) => {
+    const response = await axios.post(`${endPoint}` , {email,password})
+    .then((res) => {
+        return res.data
+    })
 }

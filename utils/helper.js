@@ -1,3 +1,4 @@
+
 export const handleInputChange = (e,stateName) => {
     const { name, value } = e.target;
     stateName((prevValue) => ({
@@ -5,3 +6,9 @@ export const handleInputChange = (e,stateName) => {
       [name]: value,
     }));
   };
+
+
+
+
+
+  
