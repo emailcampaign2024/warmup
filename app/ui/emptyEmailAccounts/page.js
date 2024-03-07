@@ -1,3 +1,5 @@
+'use client'
+import Image from "next/image";
 import React from "react";
 
 const EmptyEmailAccount = () => {
@@ -6,10 +8,12 @@ const EmptyEmailAccount = () => {
     <h2 className="text-xl text-slate-800 card-title p-6">No Email Accounts Listed !</h2>
       <div className="card w-96 bg-base-100 shadow-md lg:h-[300px]">
         <figure className="px-10">
-          <img
+          <Image
             src="https://storage.googleapis.com/distributedsourceblog/1/Add-your-email-address-blog-poster-featured-image.png"
             alt="Shoes"
             className="rounded-xl"
+            width={300}
+            height={260}
           />
         </figure>
         <div className="card-body items-center text-center space-y-3">

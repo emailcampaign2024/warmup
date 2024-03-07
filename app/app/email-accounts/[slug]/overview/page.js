@@ -1,3 +1,4 @@
+'use client'
 import DoughnutChart from "@/app/ui/doughnutChart/doughnutChart";
 import StackedBarChart from "@/app/ui/stackedbarChart/stackedbarChart";
 import React from "react";

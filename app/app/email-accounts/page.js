@@ -1,7 +1,6 @@
 "use client";
 import EmptyEmailAccount from "@/app/ui/emptyEmailAccounts/page";
-import { EmailAccountsList } from "@/constants";
-import { getAllEmailAccounts, handleInputChange } from "@/utils/helper";
+import {  handleInputChange } from "@/utils/helper";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -154,7 +153,7 @@ const EmailAccounts = () => {
       <dialog id="connectSMTP" className="modal">
         <div className="modal-box w-11/12 max-w-3xl flex flex-col justify-center items-center">
           <div className="modal-action">
-            <form method="post">
+            <form method="post" onSubmit={handleSmtpSaveButtonClick}>
               <h3 className="font-semibold text-lg my-3">SMTP settings</h3>
               <div className="w-full space-x-6  flex  mb-6">
                 <input
@@ -164,6 +163,7 @@ const EmailAccounts = () => {
                   name="fromName"
                   value={smtpDetails.fromName}
                   onChange={(e) => handleInputChange(e, setSmtpDetails)}
+                  required
                 />
                 <input
                   type="text"
@@ -172,6 +172,7 @@ const EmailAccounts = () => {
                   name="fromEmail"
                   value={smtpDetails.fromEmail}
                   onChange={(e) => handleInputChange(e, setSmtpDetails)}
+                  required
                 />
               </div>
               <div className="w-full space-x-6 flex mb-6">
@@ -182,6 +183,7 @@ const EmailAccounts = () => {
                   name="userName"
                   value={smtpDetails.userName}
                   onChange={(e) => handleInputChange(e, setSmtpDetails)}
+                  required
                 />
                 <input
                   type="text"
@@ -190,6 +192,7 @@ const EmailAccounts = () => {
                   name="appPassword"
                   value={smtpDetails.appPassword}
                   onChange={(e) => handleInputChange(e, setSmtpDetails)}
+                  required
                 />
               </div>
               <div className="w-full flex space-x-6 mb-6">
@@ -200,6 +203,7 @@ const EmailAccounts = () => {
                   name="smtpHost"
                   value={smtpDetails.smtpHost}
                   onChange={(e) => handleInputChange(e, setSmtpDetails)}
+                  required
                 />
                 <div className="w-[50%] flex items-center justify-between ">
                   <input
@@ -209,6 +213,7 @@ const EmailAccounts = () => {
                     name="smtpPort"
                     value={smtpDetails.smtpPort || ""}
                     onChange={(e) => handleInputChange(e, setSmtpDetails)}
+                    required
                   />
                   <label className="label cursor-pointer s">
                     <span className="label-text mr-1">ssl</span>
@@ -253,6 +258,7 @@ const EmailAccounts = () => {
                   name="messagePerDay"
                   value={smtpDetails.messagePerDay}
                   onChange={(e) => handleInputChange(e, setSmtpDetails)}
+                  required
                 />
                 <input
                   type="text"
@@ -261,6 +267,7 @@ const EmailAccounts = () => {
                   name="minimumTimeGap"
                   value={smtpDetails.minimumTimeGap}
                   onChange={(e) => handleInputChange(e, setSmtpDetails)}
+                  required
                 />
               </div>
               <div>
@@ -273,6 +280,7 @@ const EmailAccounts = () => {
                     name="imapHost"
                     value={smtpDetails.imapHost}
                     onChange={(e) => handleInputChange(e, setSmtpDetails)}
+                    required
                   />
                   <input
                     type="text"
@@ -281,6 +289,7 @@ const EmailAccounts = () => {
                     name="imapPort"
                     value={smtpDetails.imapPort}
                     onChange={(e) => handleInputChange(e, setSmtpDetails)}
+                    required
                   />
                 </div>
                 <div className="w-full space-x-6 flex mb-6">
@@ -296,16 +305,31 @@ const EmailAccounts = () => {
               </div>
               <div className="w-full space-x-6 flex mb-6 justify-end">
                 <button
-                  type="submit"
                   className="btn btn-md  bg-blue-500 text-slate-100"
-                  onClick={handleSmtpSaveButtonClick}
                 >
                   Save
                 </button>
                 <button
                   className="btn btn-md  bg-gray-500 text-slate-100"
                   formMethod="dialog"
-                  type="submit"
+                  type="reset"
+                  onClick={() => {
+                    setSmtpDetails({
+                      fromName: "",
+                      fromEmail: "",
+                      userName: "",
+                      appPassword: "",
+                      smtpHost: "",
+                      smtpPort: "",
+                      messagePerDay: "",
+                      minimumTimeGap: "",
+                      imapHost: "",
+                      imapPort: "",
+                      tagName: "None",
+                    })
+                    document.getElementById('connectSMTP').close()
+                    
+                  }}
                 >
                   cancel
                 </button>
