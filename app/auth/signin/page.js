@@ -22,36 +22,45 @@ const SignIn = () => {
     password: "",
   });
   const router = useRouter();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const handleGoogleLogin =  useGoogleLogin({
+  const handleGoogleLogin = useGoogleLogin({
     onSuccess: (codeResponse) => setGoogleUser(codeResponse),
     onError: (error) => toast.error(`Error During Logging In , ${error}`),
   });
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      if(formData.email === '') {
+        toast.error('Please Enter Email Address.')
+        return 
+      }
+      if(formData.password === '') {
+        toast.error("Please Enter Password")
+        return 
+      }
       setIsLoading(true);
-      const response = await axios.post('https://warmup-backend-j7v6.onrender.com/user/login', formData);
+      const response = await axios.post(
+        "https://warmup-backend-j7v6.onrender.com/user/login",
+        formData
+      );
 
       if (response.data.user) {
         setJwtToken(response.data.token);
         dispatch(addUser(response.data.user));
-        console.log(response.data.user)
-        sessionStorage.setItem('user', JSON.stringify(response.data.user));
-        router.push('/app/email-accounts');
+        console.log(response.data.user);
+        sessionStorage.setItem("user", JSON.stringify(response.data.user));
+        router.push("/app/email-accounts");
         toast.success(`Welcome Back ${response.data.user.first_name}`);
       }
     } catch (error) {
-      console.error('Error during logging in:', error);
-      toast.error('Error during logging in. Please try again.');
+      console.error("Error during logging in:", error);
+      toast.error("Error during logging in. Please try again.");
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
-  
 
   useEffect(() => {
     setIsGoogleLoading(true);
@@ -68,10 +77,9 @@ const SignIn = () => {
         )
         .then((res) => {
           const googleProfile = JSON.stringify(res.data);
-          sessionStorage.setItem('googleProfile', googleProfile);
+          sessionStorage.setItem("googleProfile", googleProfile);
           router.push("/app/email-accounts");
-          toast.success(`Welcome Back , ${res.data.given_name}`)
-
+          toast.success(`Welcome Back , ${res.data.given_name}`);
         })
         .catch((err) => console.log(err))
         .finally(() => {
@@ -132,9 +140,26 @@ const SignIn = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-                <input type="password" className="grow" name="password" placeholder="Password" value={formData.password} onChange={(e) => handleInputChange(e, setFormData)} />
+                <input
+                  type="password"
+                  className="grow"
+                  name="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={(e) => handleInputChange(e, setFormData)}
+                />
               </label>
-              <button className="btn  btn-outline  w-full " type="submit" onClick={handleSubmit} >{isLoading ? <span className="loading loading-spinner loading-md"></span>: 'Sign In'}</button>
+              <button
+                className="btn  btn-outline  w-full "
+                type="submit"
+                onClick={handleSubmit}
+              >
+                {isLoading ? (
+                  <span className="loading loading-spinner loading-md"></span>
+                ) : (
+                  "Sign In"
+                )}
+              </button>
             </form>
             <p className="font-semibold">or</p>
             <button

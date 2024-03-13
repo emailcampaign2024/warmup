@@ -59,6 +59,7 @@ const EmailAccounts = () => {
         const response = await axios.get(
           "https://warmup-backend-j7v6.onrender.com/client/getAll"
         );
+        console.log(response)
         if (response.data) {
           setEmailAccounts(response.data.configs);
         }

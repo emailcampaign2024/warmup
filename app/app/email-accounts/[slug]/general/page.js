@@ -1,20 +1,40 @@
 "use client";
-import React, { useState } from "react";
+import { backendBaseUrl } from "@/constants";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
-const General = () => {
+const General = ({id}) => {
   const [smtpDetails, setSmtpDetails] = useState({
-    fromName: "",
-    fromEmail: "",
-    userName: "",
-    appPassword: "",
-    smtpHost: "",
-    smtpPort: "",
-    messagePerDay: "",
-    minimumTimeGap: "",
-    imapHost: "",
-    imapPort: "",
+    fromName:'',
+    fromEmail: '',
+    userName: '',
+    appPassword: '',
+    smtpHost: '',
+    smtpPort: '',
+    messagePerDay: '',
+    minimumTimeGap: '',
+    imapHost: '',
+    imapPort: '',
     tagName: "None",
   });
+  const [isLoading,setIsLoading] = useState(false)
+
+  useEffect(() => {
+    setIsLoading(true)
+    axios.get(`https://warmup-backend-j7v6.onrender.com/client/${id}`)
+    .then((res) => {
+      if(res.status === 200){
+        setSmtpDetails(res.data.accountCredentials)
+      }
+    })
+    .catch((error) => {
+      toast.error("Error Fetching Data")
+    })
+    .finally(() => {
+      setIsLoading(false)
+    })
+  } , [])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,7 +54,18 @@ const General = () => {
 
   const handleSmtpSaveButtonClick = (e) => {
     e.preventDefault();
-    console.log(smtpDetails);
+    setIsLoading(true)
+    axios.put(`${backendBaseUrl}client/updateaccount/${id}`, smtpDetails)
+    .then((res) => {
+      console.log(res)
+      setIsLoading(false)
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+    .finally(() => {
+      setIsLoading(false)
+    })
   };
   
   const handleCancelButtonClick = () => {

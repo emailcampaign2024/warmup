@@ -1,15 +1,13 @@
 'use client'
 import DoughnutChart from "@/app/ui/doughnutChart/doughnutChart";
 import StackedBarChart from "@/app/ui/stackedbarChart/stackedbarChart";
+import { overViewInfo } from "@/constants";
+import { getDoughnutChartData, getStackedBarChartData } from "@/utils/helper";
 import React from "react";
 
-const Overview = () => {
-  const data1 = [70, 30]; // Example data for Dataset 1
-  const ChartData = [
-    [15, 0, 0],
-    [7, 1, 0],
-    [12, 4, 1],
-  ];
+const Overview = ({id}) => {
+  const inboxVsSpamData = getDoughnutChartData(overViewInfo.inboxVsSpam) 
+  const stackedBarChartData = getStackedBarChartData(overViewInfo.warmUpEmailsSentLast7Days)
   return (
     <div>
       <div className="p-3">
@@ -51,7 +49,7 @@ const Overview = () => {
           </div>
           <div className="flex w-full items-center">
             <div className="w-1/2">
-              <DoughnutChart data1={data1} />
+              <DoughnutChart data1={inboxVsSpamData} />
             </div>
             <div className="w-1/2">
               <div className="stats stats-vertical shadow ">
@@ -75,7 +73,7 @@ const Overview = () => {
             <p className="text-slate-600 text-lg">(last 7 days)</p>
           </div>
           <div>
-            <StackedBarChart data={ChartData} />
+            <StackedBarChart data={stackedBarChartData} />
           </div>
         </div>
       </div>

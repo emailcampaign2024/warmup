@@ -2,6 +2,7 @@
 import { delUser } from "@/redux/features/profileSlice";
 import { googleLogout } from "@react-oauth/google";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -55,11 +56,11 @@ const Navbar = (user) => {
           </svg>
         </div>
         <ul tabIndex={0} className="menu dropdown-content  z-10 p-2 shadow bg-base-100 rounded-box w-52 dropdown-shadow mt-4">
-          <li><a>Email Campaigns</a></li> 
-          <li><a>Master Inbox</a></li>
-          <li><a>Email Accounts</a></li>
-          <li><a>Integrations</a></li>
-          <li><a>Global Analytics</a></li>
+          <li><Link href={'/app/email-campaigns'}>Email Campaigns</Link></li> 
+          <li><Link href={'/app/master-inbox'}>Master Inbox</Link></li>
+          <li><Link href={'/app/email-accounts'}>Email Accounts</Link></li>
+          <li><Link href={'/app/integrations'}>Integrations</Link></li>
+          <li><Link href={'/app/global-analytics'}>Global Analytics</Link></li>
         </ul>
       </div>
       </div>
@@ -80,7 +81,7 @@ const Navbar = (user) => {
             className="btn btn-ghost btn-circle avatar"
           >
             <div className={googleProfile ? 'w-10 rounded-full' : 'w-7 rounded-full'}>
-              {googleProfile ? <Image alt="googleProfile" src={googleProfile?.picture} width={48} height={48} /> : <Image alt="Profile" src={'/profile.png'} width={30} height={30} /> }
+              {googleProfile ? <Image alt="googleProfile" src={googleProfile?.picture} width={48} height={48} /> : <Image alt="Profile" src={'/profile_img.png'} width={30} height={30} /> }
             </div>
           </div>
           <ul
