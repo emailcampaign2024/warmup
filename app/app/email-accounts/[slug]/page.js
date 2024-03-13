@@ -1,12 +1,33 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Overview from './overview/page';
 import General from './general/page';
 import Warmup from './warmup/page';
 import { generalInfo, overViewInfo } from '@/constants';
+import axios from 'axios';
 
 const AccountInfo = ({ params: { slug } }) => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [account, setAccount] = useState({})
+  const [isLoading,setIsLoading] = useState(false)
+
+
+
+  useEffect(() => {
+    setIsLoading(true)
+    axios.get(`https://warmup-backend-j7v6.onrender.com/client/${id}`)
+    .then((res) => {
+      if(res.status === 200){
+        setAccount(res.data.accountCredentials)
+      }
+    })
+    .catch((error) => {
+      toast.error("Error Fetching Data:" , error)
+    })
+    .finally(() => {
+      setIsLoading(false)
+    })
+  } , [])
 
   const handleTabChange = (tabName) => {
     setActiveTab(tabName);
@@ -15,8 +36,8 @@ const AccountInfo = ({ params: { slug } }) => {
   return (
     <div className="w-[98vw] h-full flex flex-col rounded-2xl ">
       <div className="flex items-center">
-        <h2 className="font-semibold text-xl text-slate-800 py-4 px-2">{generalInfo.userName}</h2>
-        <p className="text-slate-600 text-lg">{generalInfo.fromEmail}</p>
+        <h2 className="font-semibold text-xl text-slate-800 py-4 px-2">{account.userName}</h2>
+        <p className="text-slate-600 text-lg">{account.fromEmail}</p>
       </div>
       <div role="tablist" className="tabs tabs-lifted tabs-md">
         <input
