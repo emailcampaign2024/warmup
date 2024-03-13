@@ -22,7 +22,7 @@ const EmailCampaigns = () => {
         <div className="flex justify-between items-center space-x-6">
           <div className="dropdown dropdown-left">
             <div tabIndex={0} role="button" className="">
-              <Image src={"/sort_icon.png"} width={28} height={28} />
+              <Image src={"/sort_icon.png"} alt='sort' width={28} height={28} />
             </div>
             <ul
               tabIndex={0}
@@ -92,7 +92,7 @@ const EmailCampaigns = () => {
             activeTab === "folders" ? "" : "hidden"
           }`}
         >
-          'folders'
+          folders
         </div>
       </div>
     </div>
