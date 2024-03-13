@@ -15,7 +15,7 @@ const AccountInfo = ({ params: { slug } }) => {
 
   useEffect(() => {
     setIsLoading(true)
-    axios.get(`https://warmup-backend-j7v6.onrender.com/client/${id}`)
+    axios.get(`https://warmup-backend-j7v6.onrender.com/client/${slug}`)
     .then((res) => {
       if(res.status === 200){
         setAccount(res.data.accountCredentials)
