@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import Overview from './overview/page';
 import General from './general/page';
 import Warmup from './warmup/page';
-import { generalInfo, overViewInfo } from '@/constants';
+import { endPoints, generalInfo, overViewInfo } from '@/constants';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const AccountInfo = ({ params: { slug } }) => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -15,9 +16,10 @@ const AccountInfo = ({ params: { slug } }) => {
 
   useEffect(() => {
     setIsLoading(true)
-    axios.get(`https://warmup-backend-j7v6.onrender.com/client/${slug}`)
+    axios.get(`${endPoints.getEmailAccountsDetailsById}/${slug}`)
     .then((res) => {
       if(res.status === 200){
+        console.log(res, 'ujhui')
         setAccount(res.data.accountCredentials)
       }
     })

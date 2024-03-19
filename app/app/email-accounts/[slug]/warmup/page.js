@@ -2,6 +2,7 @@
 import { backendBaseUrl } from "@/constants";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 const Warmup = ({ id }) => {
   const [warmupSettingsData, setWarmupSettingsData] = useState({
@@ -17,9 +18,13 @@ const Warmup = ({ id }) => {
   useEffect(() => {
     axios.get(`${backendBaseUrl}client/warmupdetails/${id}`)
     .then((res) => {
-      if(res.data.success === true){
+      if(res.data){
+        console.log(res, 'warm')
         setWarmupSettingsData(res.data.accountCredentials)
       }
+    })
+    .catch((error) => {
+      console.error('Error Updating Data :' , error)
     })
   },[])
 
@@ -34,7 +39,7 @@ const Warmup = ({ id }) => {
 
   const handleSaveChanges = async () => {
     const dataToSend = {
-      id: id,
+      accountId: id,
       isOn: warmupSettingsData.isOn,
       totalWarmUpEmailsPerDay: warmupSettingsData.totalWarmUpEmailsPerDay,
       dailyRampUpEnabled: warmupSettingsData.dailyRampUpEnabled,
@@ -44,8 +49,11 @@ const Warmup = ({ id }) => {
     setIsLoading(true)
     axios.put(`${backendBaseUrl}client/updateWarmup/${id}`, dataToSend)
     .then((res) => {
-      console.log(res)
-      setIsLoading(false)
+      console.log(res, 'update')
+      if(res.status === 200 ){
+        toast.success('Updated Successfully')
+        setIsLoading(false)
+      }
     })
     .catch((error) => {
       console.error(error)
@@ -140,6 +148,7 @@ const Warmup = ({ id }) => {
           {isLoading ? <span className="loading loading-spinner loading-sm"></span> : 'Save'}
         </button>
       </div>
+      <Toaster />
     </div>
   );
 };

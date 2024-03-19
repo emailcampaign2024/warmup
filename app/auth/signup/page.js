@@ -31,9 +31,8 @@ const SignUp = () => {
     await axios
       .post("https://warmup-backend-j7v6.onrender.com/user/signup", formData)
       .then((res) => {
-        if (res.status == 200) {
-          setIsLoading(true);
-        }
+        setIsLoading(true);
+        console.log(res)
         if(res.data.error){
           toast.error(res.data.error)
         }

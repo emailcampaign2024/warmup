@@ -11,6 +11,8 @@ import { handleInputChange } from "@/utils/helper";
 import { login, setJwtToken, setRefreshToken } from "@/utils/auth";
 import { addUser } from "@/redux/features/profileSlice";
 
+
+
 const SignIn = () => {
   const [googleUser, setGoogleUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,9 +44,10 @@ const SignIn = () => {
       }
       setIsLoading(true);
       const response = await axios.post(
-        "https://warmup-backend-j7v6.onrender.com/user/login",
+        'https://warmup-backend-j7v6.onrender.com/user/login',
         formData
       );
+      console.log(response)
 
       if (response.data.user) {
         setJwtToken(response.data.token);

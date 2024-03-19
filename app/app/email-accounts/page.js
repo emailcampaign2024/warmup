@@ -132,6 +132,17 @@ const EmailAccounts = () => {
     router.push(`email-accounts/${name}`);
   };
 
+  const handleRemoveAccountClick = (id) => {
+    axios.delete(`http://localhost:3001/email-accounts/${id}`)
+    .then((res) => {
+      console.log(res,'addAcc')
+      if(res.status === 200){
+        setShouldReload(true);
+      toast.success("Account Removed Successfully !");
+      }
+    })
+  }
+
   return (
     <div className="w-[98vw] h-full flex flex-col  rounded-2xl ">
       <dialog id="selectProvider" className="modal">
@@ -444,7 +455,7 @@ const EmailAccounts = () => {
                           tabIndex={0}
                           className="dropdown-content z-[1] menu p-2 dropdown-shadow bg-base-100 rounded-box w-52 mt-1"
                         >
-                          <li>
+                          <li onClick={() => handleRemoveAccountClick(account._id)}>
                             <a>Remove Account</a>
                           </li>
                           <li>

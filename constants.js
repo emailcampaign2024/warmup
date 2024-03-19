@@ -61,3 +61,14 @@ export const warmUpSettings = {
 };
 
 export const backendBaseUrl = 'https://warmup-backend-j7v6.onrender.com/'
+
+export const endPoints = {
+  addEmailAccount : `${backendBaseUrl}client/accountadd`,
+  fetchAllEmailAccounts : `${backendBaseUrl}client/getAll`,
+  fetchEmailAccountById: `${backendBaseUrl}client/`,
+  toggleWarmup: `${backendBaseUrl}client/updateWarmup/`,
+  getWarmupSettingsById: `${backendBaseUrl}client/warmupdetails/`,
+  getEmailAccountsDetailsById: `https://warmup-backend-j7v6.onrender.com/client/account`,
+  signup:"https://warmup-backend-j7v6.onrender.com/user/signup",
+  login: "https://warmup-backend-j7v6.onrender.com/user/login",
+}

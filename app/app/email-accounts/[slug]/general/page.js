@@ -1,5 +1,5 @@
 "use client";
-import { backendBaseUrl } from "@/constants";
+import { backendBaseUrl, endPoints } from "@/constants";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -22,7 +22,7 @@ const General = ({id}) => {
 
   useEffect(() => {
     setIsLoading(true)
-    axios.get(`https://warmup-backend-j7v6.onrender.com/client/${id}`)
+    axios.get(`${endPoints.getEmailAccountsDetailsById}/${id}`)
     .then((res) => {
       if(res.status === 200){
         setSmtpDetails(res.data.accountCredentials)
@@ -117,7 +117,7 @@ const General = ({id}) => {
               onChange={handleInputChange}
             />
             <input
-              type="text"
+              type="password"
               placeholder="App Password"
               className="input input-bordered w-[50%] max-w-xs"
               name="appPassword"
